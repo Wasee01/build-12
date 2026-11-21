@@ -1,0 +1,31 @@
+name: Java CI
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: audit_demo
+          MYSQL_USER: audit_user
+          MYSQL_PASSWORD: local_only_change_me
+          MYSQL_ROOT_PASSWORD: root_local_only
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot_local_only --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Check audit boundary
+        run: python3 scripts/check-audit-boundary.py
+      - name: Verify with MySQL
+        run: mvn -B clean verify

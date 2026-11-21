@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: auditing-without-touching-services
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/audit_demo?useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USER:wasee}
+    password: ${DB_PASSWORD:Beeta70@}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+demo:
+  notification:
+    fail: ${DEMO_NOTIFICATION_FAIL:false}
+  users:
+    alice-password: ${ALICE_PASSWORD:alice-local-password}
+    bob-password: ${BOB_PASSWORD:bob-local-password}
+    registrar-password: ${REGISTRAR_PASSWORD:registrar-local-password}

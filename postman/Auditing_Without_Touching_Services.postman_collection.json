@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "Auditing Without Touching Services",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "enrollmentId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 Enroll Alice",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "alice",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "alice-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/enrollments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"sectionId\": 101}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) { pm.collectionVariables.set('enrollmentId', pm.response.json().id); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 Fail duplicate enroll (repeat)",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "alice",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "alice-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/enrollments",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"sectionId\": 101}"
+        }
+      }
+    },
+    {
+      "name": "3 Read enrollment",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "alice",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "alice-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/enrollments/{{enrollmentId}}",
+        "header": []
+      }
+    },
+    {
+      "name": "4 Drop enrollment",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "alice",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "alice-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/enrollments/{{enrollmentId}}/drop",
+        "header": []
+      }
+    },
+    {
+      "name": "5 Registrar change status",
+      "request": {
+        "method": "PUT",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "registrar",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "registrar-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/enrollments/{{enrollmentId}}/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"WAITLISTED\"}"
+        }
+      }
+    },
+    {
+      "name": "6 Registrar read audits",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "registrar",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "registrar-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/admin/audits",
+        "header": []
+      }
+    },
+    {
+      "name": "7 Registrar notification failures",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "registrar",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "registrar-local-password",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/api/admin/notification-failures",
+        "header": []
+      }
+    }
+  ]
+}

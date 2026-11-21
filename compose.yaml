@@ -1,0 +1,19 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: audit_demo
+      MYSQL_USER: audit_user
+      MYSQL_PASSWORD: local_only_change_me
+      MYSQL_ROOT_PASSWORD: root_local_only
+    ports:
+      - "3307:3306"
+    volumes:
+      - audit_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+volumes:
+  audit_mysql_data:
